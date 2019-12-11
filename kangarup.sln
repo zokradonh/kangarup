@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.705
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kangarup", "kangarup\kangarup.csproj", "{28EDC029-9634-4B57-A9BD-E6604C52F871}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kangarup.test", "kangarup.test\kangarup.test.csproj", "{28EDC029-9634-4B57-A9BD-E6604C52F871}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kangarup", "kangarup\kangarup.csproj", "{A474843A-5921-4F71-A1CC-24BCA4CA0DB7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{28EDC029-9634-4B57-A9BD-E6604C52F871}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28EDC029-9634-4B57-A9BD-E6604C52F871}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28EDC029-9634-4B57-A9BD-E6604C52F871}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A474843A-5921-4F71-A1CC-24BCA4CA0DB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A474843A-5921-4F71-A1CC-24BCA4CA0DB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A474843A-5921-4F71-A1CC-24BCA4CA0DB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A474843A-5921-4F71-A1CC-24BCA4CA0DB7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
