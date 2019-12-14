@@ -17,6 +17,8 @@ namespace kangarup
     /// </summary>
     public class Updater
     {
+        public const string TempFolderName = "kangupdate-oldfiles";
+
         private RSACryptoServiceProvider _rsa;
 
         public Uri UpdateUri { get; set; }
@@ -103,7 +105,7 @@ namespace kangarup
 
             var httpClient = new HttpClient();
             var tempPath = Path.GetTempPath();
-            var tempFolder = Directory.CreateDirectory(Path.Combine(tempPath, "kangupdate"));
+            var tempFolder = Directory.CreateDirectory(Path.Combine(tempPath, TempFolderName));
             foreach (var infoFile in info.Files)
             {
                 var downloadStream = await httpClient.GetStreamAsync(UpdateUri.Append(infoFile.RelativeUrl)).ConfigureAwait(false);
@@ -145,6 +147,14 @@ namespace kangarup
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// To be called on every startup. Deletes all files in user-temp-folder\kangupdate
+        /// </summary>
+        public static void CleanupTempFiles()
+        {
+            Directory.Delete(Path.Combine(Path.GetTempPath(), TempFolderName), true);
         }
 
         public static void RestartApplication()

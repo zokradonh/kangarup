@@ -25,7 +25,7 @@ namespace kangarup
         }
         
         public async Task<UpdateInfo> CreateUpdateInfoAsync(string pathOfFiles, string patchTitle,
-            Version newVersion)
+            Version newVersion, Func<string, bool> pathFilter = null)
         {
             if (!Directory.Exists(pathOfFiles))
             {
@@ -39,11 +39,17 @@ namespace kangarup
             };
 
             // search for application files
-            var hashComputeOperations = Directory.EnumerateFiles(Path.GetFullPath(pathOfFiles), "*", SearchOption.AllDirectories)
+            var files = Directory.EnumerateFiles(Path.GetFullPath(pathOfFiles), "*", SearchOption.AllDirectories)
                                         .Where(s => Path.GetFileName(s) != "kdeploy.ps1")
-                                        .Where(s => !Path.GetFileName(s).EndsWith(".snk"))
-                                        .Select(filePath => FileInfo.FromAbsolutePathAsync(filePath, Path.GetFullPath(pathOfFiles)));
+                                        .Where(s => !Path.GetFileName(s).EndsWith(".snk"));
 
+            // filter files
+            if (pathFilter != null) files = files.Where(pathFilter);
+
+            // create FileInfo objects
+            var hashComputeOperations = files.Select(filePath => FileInfo.FromAbsolutePathAsync(filePath, Path.GetFullPath(pathOfFiles)));
+
+            // execute query => calc hashes
             updateInfo.Files = await Task.WhenAll(hashComputeOperations);
 
             return updateInfo;
@@ -55,16 +61,19 @@ namespace kangarup
             {
                 var rsa = SignaturePrivateCertificate.GetRSAPrivateKey();
 
+                // generate manifest bytes
                 var serializer = new YamlDotNet.Serialization.Serializer();
                 var yaml = serializer.Serialize(info);
                 var yamlBytes = Encoding.UTF8.GetBytes(yaml);
-                var signature = rsa.SignData(yamlBytes, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
 
-                var webClient = new WebClient {Credentials = credentials};
+                // generate signature for yaml manifest
+                var signature = rsa.SignData(yamlBytes, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
 
                 try
                 {
                     // upload manifest and signature
+                    var webClient = new WebClient { Credentials = credentials };
+                    
                     await webClient.UploadDataTaskAsync(new Uri(UpdateUri, "update.yml"), "PUT", yamlBytes)
                         .ConfigureAwait(false);
                     await webClient.UploadDataTaskAsync(new Uri(UpdateUri, "update.sig"), "PUT", signature)
